@@ -1,9 +1,11 @@
 require 'httparty'
 require 'json'
+require './lib/roadmap'
 
 class Kele
   include HTTParty
-
+  include Roadmap
+  attr_accessor :user_data
 
   def initialize(email, password)
     @api_uri = 'https://www.bloc.io/api/v1'
@@ -17,12 +19,12 @@ class Kele
 
     if response.code == 200
       p "Welcome #{email}!"
+      @auth_token = response["auth_token"]
 
     else
       p "Email or password are incorrect"
 
     end
-    @auth_token = response["auth_token"]
   end
 
   def get_me
@@ -35,4 +37,6 @@ class Kele
       "authorization" => @auth_token})
       @mentor_availability = JSON.parse(response.body)
   end
+
+
 end
