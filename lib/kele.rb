@@ -3,6 +3,7 @@ require 'json'
 require './lib/roadmap'
 
 class Kele
+
   include HTTParty
   include Roadmap
   attr_accessor :user_data
@@ -37,7 +38,7 @@ class Kele
       @mentor_availability = JSON.parse(response.body)
   end
 
-  def get_messages(page = nil)
+  def get_messages(page = 1)
     if page
         response = self.class.get("#{@api_uri}/message_threads?page=#{page}", headers: {"authorization" => @auth_token})
     else
