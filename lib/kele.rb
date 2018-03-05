@@ -40,6 +40,7 @@ class Kele
 
   def get_messages(page = 1)
         response = self.class.get("#{@api_uri}/message_threads?page=#{page}", headers: {"authorization" => @auth_token})
+
       # response = self.class.get("#{@api_uri}/message_threads", headers: { "authorization" => @auth_token })
       @messages = JSON.parse(response.body)
   end
@@ -55,21 +56,21 @@ class Kele
           "token": message_thread,
           "subject": subject,
           "stripped-text": body
-      }
-    }
-  else
-    msg_data ={
-      body: {
-        'sender': sender_email,
-        'recipient_id': recipient_id,
-        'subject': subject,
-        'stripped-text': body
-      },
-        headers: {"authorization" => @auth_token})
-      }
-    end
-    response = self.class.post("#{@api_uri}/messages",
-  end
+          }
+        }
+      else
+        msg_data ={
+          body: {
+            'sender': sender_email,
+            'recipient_id': recipient_id,
+            'subject': subject,
+            'stripped-text': body
+          },
+            headers: {"authorization" => @auth_token})
+          }
+        end
+        response = self.class.post("#{@api_uri}/messages",
+      end
 
   def create_submission(assignment_branch, assignment_commit_link, checkpoint_id, comment)
     response = self.class.post("#{@api_uri}/checkpoint_submissions",
