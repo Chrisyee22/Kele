@@ -7,7 +7,6 @@ class Kele
   include HTTParty
   include Roadmap
   attr_accessor :user_data
-  attr_accessor :auth_token
 
   def initialize(email, password)
     @api_uri = 'https://www.bloc.io/api/v1'
@@ -51,25 +50,38 @@ class Kele
   def create_message(sender_email, recipient_id, message_thread, subject, body)
 
     response = self.class.post("#{@api_uri}/messages",
-    body: {
-      "sender": sender_email,
-      "recipient_id": recipient_id,
-      "token": message_thread,
-      "subject": subject,
-      "stripped-text": body
-    },
-    headers: {"authorization" => @auth_token})
-
+      if token
+        msg_data ={
+          body: {
+          "sender": sender_email,
+          "recipient_id": recipient_id,
+          "token": message_thread,
+          "subject": subject,
+          "stripped-text": body
+      }
+    }
+  else
+    msg_data ={
+      body: {
+        'sender': sender_email,
+        'recipient_id': recipient_id,
+        'subject': subject,
+        'stripped-text': body
+      },
+        headers: {"authorization" => @auth_token})
+      }
+    end
+    response = self.class.post("#{@api_uri}/messages",
   end
 
-  def create_submission(assignment_branch, assignment_commit_link, checkpoint_id, comment, enrollment_id)
+  def create_submission(assignment_branch, assignment_commit_link, checkpoint_id, comment)
     response = self.class.post("#{@api_uri}/checkpoint_submissions",
       body: {
         "assignment_branch": assignment_branch,
         "assignment_commit_link": assignment_commit_link,
         "checkpoint_id": checkpoint_id,
         "comment": comment,
-        "enrollment_id": enrollment_id
+        "enrollment_id": @me_hash["current_enrollment"]["id"],
       },
       headers: {"authorization" => @auth_token})
 
